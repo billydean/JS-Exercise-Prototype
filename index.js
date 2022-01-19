@@ -39,15 +39,25 @@ Airplane.prototype.land = function () {
         + It should return a string with `name` and `age`. Example: "Mary, 50"
 */
 
-function Person() {
-  
+function Person(name,age) {
+  this.name = name;
+  this.age = age;
+  this.stomach = [];
 }
 
+Person.prototype.eat = function (someFood) {
+  if (this.stomach.length <= 10) {
+    this.stomach.push(someFood);
+  }
+}
 
+Person.prototype.poop = function () {
+  this.stomach = [];
+}
 
-
-
-
+Person.prototype.toString = function () {
+  return `${this.name}, ${this.age}`;
+}
 
 /*
   TASK 2
@@ -63,8 +73,35 @@ function Person() {
         + The `drive` method should return a string "I ran out of fuel at x miles!" x being `odometer`.
 */
 
-function Car() {
-  
+function Car(model,milesPerGallon) {
+  this.model = model;
+  this.milesPerGallon = milesPerGallon;
+  this.tank = 0;
+  this.odometer = 0;
+}
+
+Car.prototype.fill = function(gallons) {
+  this.tank += gallons;
+}
+Car.prototype.drive = function(distance) {
+  // determine how far new fuel level will get you
+  let ableDistance = this.tank * this.milesPerGallon;
+  // determine value for fuel NEEDED for driving distance
+  let neededFuel = distance / this.milesPerGallon;
+  // determine whether new fuel level will meet/exceed requirement
+  // drive in all cases (tank down, odometer up) BUT...
+  // if meet/exceed, no message
+  // if short, message saying "you got this far"
+  // console log to check all!
+  if (ableDistance >= distance) {
+    this.tank -= neededFuel;
+    this.odometer += distance;
+    return `You had enough gas in the tank! You drove ${distance} miles. You now have ${this.tank} gallons in the tank and your odometer now reads ${this.odometer} miles.`
+  } else {
+    this.tank = 0;
+    this.odometer += ableDistance;
+    return `Uh oh, you should have gassed up first! You only made it ${ableDistance} miles before you ground to a halt.`
+  }
 }
 
 
@@ -75,18 +112,29 @@ function Car() {
     - Besides the methods on Person.prototype, babies have the ability to `.play()`:
         + Should return a string "Playing with x", x being the favorite toy.
 */
-function Baby() {
- 
+function Baby(name,age,favoriteToy) {
+ Person.call(this,name,age);
+ this.favoriteToy = favoriteToy;
 }
+
+Baby.prototype = Object.create(Person.prototype);
+Baby.prototype.play = function() {
+  return `Playing with ${this.favoriteToy}`;
+}
+
 
 
 /* 
   TASK 4
   In your own words explain the four principles for the "this" keyword below:
-  1. 
-  2. 
-  3. 
-  4. 
+  1. window/global
+    basically a NON-use case; great for debugging. if nothing else applies, 'this' binds to the window
+  2. implicit binding
+    most of the above uses implicit binding; this binds contextually the function relative to its call
+  3. explicit binding
+    there are specific ways to bind this more explicitly: call, apply, and bind. "call" helps children inherit parent methods. Bind can transfer over bindings to create a new function, without invoking anything. Apply? Haven't gone over it yet.
+  4. "new" binding
+    this is a specified version of principle #2. It's bound relative to the context of a function, but more specifically, constructor functions/methods. Invoking these functions with the 'new' keyword binds any instance of 'this' to the newly constructed object.
 */
 
 
